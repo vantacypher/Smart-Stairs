@@ -1,0 +1,62 @@
+// ============================================================
+//  Smart Stairs - Exhibition Prototype
+//  Arduino Nano | IR Sensor + 12 LEDs
+// ============================================================
+
+// --- PIN ASSIGNMENTS ---
+const int IR_PIN = 2;
+
+const int LED_PINS[] = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, A0, A1};
+const int LED_COUNT = 12;
+
+// --- TIMING ---
+const unsigned long OFF_DELAY_MS = 10000; // 10 seconds after last detection
+
+// --- IR SENSOR LOGIC ---
+// Most IR obstacle modules output LOW when something is detected.
+// If your sensor outputs HIGH on detection, change this to HIGH.
+const int DETECTED_STATE = LOW;
+
+// ============================================================
+
+bool ledsOn = false;
+unsigned long lastDetectedTime = 0;
+
+void setAllLEDs(bool state) {
+  for (int i = 0; i < LED_COUNT; i++) {
+    digitalWrite(LED_PINS[i], state ? HIGH : LOW);
+  }
+}
+
+void setup() {
+  pinMode(IR_PIN, INPUT);
+
+  for (int i = 0; i < LED_COUNT; i++) {
+    pinMode(LED_PINS[i], OUTPUT);
+  }
+
+  setAllLEDs(false);
+  Serial.begin(9600);
+  Serial.println("Smart Stairs ready.");
+}
+
+void loop() {
+  int sensorValue = digitalRead(IR_PIN);
+  bool personDetected = (sensorValue == DETECTED_STATE);
+
+  if (personDetected) {
+    lastDetectedTime = millis(); // reset the countdown every time detected
+    if (!ledsOn) {
+      setAllLEDs(true);
+      ledsOn = true;
+      Serial.println("Person detected — LEDs ON.");
+    }
+  } else {
+    // No detection — check if 10 seconds have passed since last detection
+    if (ledsOn && (millis() - lastDetectedTime >= OFF_DELAY_MS)) {
+      setAllLEDs(false);
+      ledsOn = false;
+      Serial.println("Timeout — LEDs OFF.");
+    }
+  }
+}
