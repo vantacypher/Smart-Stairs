@@ -404,7 +404,7 @@ html,body{
 <div id="intro-overlay">
   <div class="intro-glow ig1"></div>
   <div class="intro-glow ig2"></div>
-  <div class="intro-brand">Computer Exhibition 2025</div>
+  <div class="intro-brand">Computer Exhibition 2026</div>
   <div class="intro-title">Smart<br><span>Stairs</span></div>
   <p class="intro-desc">An interactive simulation of sensor-controlled automated staircase illumination.</p>
   <button class="play-btn" id="playBtn" aria-label="Enter Exhibition">
